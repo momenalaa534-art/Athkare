@@ -6,7 +6,7 @@ import { TopBar } from '../components/TopBar';
 import { GoogleGenAI } from '@google/genai';
 import { StoryReader } from '../components/StoryReader';
 import { getLocalStory } from '../data/islamicStories';
-import { MORE_SAHABA, MORE_SAHABIYAT, MORE_TABIUN, getDailyItems } from '../utils/dailyStories';
+import { MORE_SAHABA, MORE_SAHABIYAT, MORE_TABIUN, getDailyItems } from '../data/dailyStories';
 import html2canvas from 'html2canvas';
 
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });

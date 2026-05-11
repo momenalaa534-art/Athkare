@@ -20,8 +20,13 @@ export default defineConfig(({mode}) => {
       sourcemap: false,
       rollupOptions: {
         output: {
-          manualChunks: {
-            vendor: ['react', 'react-dom'],
+          manualChunks(id) {
+            if (!id.includes('node_modules')) return undefined;
+            if (id.includes('@google/genai')) return 'ai';
+            if (id.includes('html2canvas') || id.includes('html-to-image')) return 'capture';
+            if (id.includes('lucide-react') || id.includes('motion')) return 'ui-vendor';
+            if (id.includes('react') || id.includes('react-dom') || id.includes('zustand')) return 'vendor';
+            return undefined;
           },
         },
       },

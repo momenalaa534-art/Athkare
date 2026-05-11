@@ -7,44 +7,44 @@
  * @license
  * SPDX-License-Identifier: Apache-2.0
  */
-import { useEffect } from 'react';
+import { lazy, Suspense, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Home, Compass, Trophy, Star, Mic, MessageSquare, LayoutGrid } from 'lucide-react';
 import { useStore, Screen } from './store';
-
-import { HomeScreen } from './screens/HomeScreen';
-import { AthkarScreen } from './screens/AthkarScreen';
-import { AthkarCategoriesScreen } from './screens/AthkarCategoriesScreen';
-import { TasbihScreen } from './screens/TasbihScreen';
-import { KidsHomeScreen } from './screens/KidsScreen';
-import { QuranScreen } from './screens/QuranScreen';
-import { TasmeeScreen } from './screens/TasmeeScreen';
-import { HadithQuizScreen } from './screens/HadithQuizScreen';
-import { ChallengesScreen } from './screens/ChallengesScreen';
-import { RewardsScreen } from './screens/RewardsScreen';
-import { AIDuaScreen } from './screens/AIDuaScreen';
-import { FullQuranScreen } from './screens/FullQuranScreen';
-import { SurahScreen } from './screens/SurahScreen';
-import { PrayerTimesScreen } from './screens/PrayerTimesScreen';
-import { HadithLibraryScreen } from './screens/HadithLibraryScreen';
-import { IslamicStoriesScreen } from './screens/IslamicStoriesScreen';
-import { MoreScreen } from './screens/MoreScreen';
-import { OnThisDayScreen } from './screens/OnThisDayScreen';
-import { QiblaScreen } from './screens/QiblaScreen';
-import { CalendarScreen } from './screens/CalendarScreen';
-import { FlightPrayerScreen } from './screens/FlightPrayerScreen';
-import { KhatmahScreen } from './screens/KhatmahScreen';
-import { TadabburScreen } from './screens/TadabburScreen';
-import { HappinessWheelScreen } from './screens/HappinessWheelScreen';
-import { MemorizationScreen } from './screens/MemorizationScreen';
-import { SettingsDrawer } from './components/SettingsDrawer';
 import { useTranslation } from './i18n';
 import { useAthkarNotifications } from './hooks/useAthkarNotifications';
 import { useWirdReminder } from './hooks/useWirdReminder';
 import { useFocusMode } from './hooks/useFocusMode';
 import { usePrayerNotifications } from './hooks/usePrayerNotifications';
-import { OnboardingScreen } from './screens/OnboardingScreen';
 import { useChallengeSync } from './hooks/useChallengeSync';
+
+const HomeScreen = lazy(() => import('./screens/HomeScreen').then((m) => ({ default: m.HomeScreen })));
+const AthkarScreen = lazy(() => import('./screens/AthkarScreen').then((m) => ({ default: m.AthkarScreen })));
+const AthkarCategoriesScreen = lazy(() => import('./screens/AthkarCategoriesScreen').then((m) => ({ default: m.AthkarCategoriesScreen })));
+const TasbihScreen = lazy(() => import('./screens/TasbihScreen').then((m) => ({ default: m.TasbihScreen })));
+const KidsHomeScreen = lazy(() => import('./screens/KidsScreen').then((m) => ({ default: m.KidsHomeScreen })));
+const QuranScreen = lazy(() => import('./screens/QuranScreen').then((m) => ({ default: m.QuranScreen })));
+const TasmeeScreen = lazy(() => import('./screens/TasmeeScreen').then((m) => ({ default: m.TasmeeScreen })));
+const HadithQuizScreen = lazy(() => import('./screens/HadithQuizScreen').then((m) => ({ default: m.HadithQuizScreen })));
+const ChallengesScreen = lazy(() => import('./screens/ChallengesScreen').then((m) => ({ default: m.ChallengesScreen })));
+const RewardsScreen = lazy(() => import('./screens/RewardsScreen').then((m) => ({ default: m.RewardsScreen })));
+const AIDuaScreen = lazy(() => import('./screens/AIDuaScreen').then((m) => ({ default: m.AIDuaScreen })));
+const FullQuranScreen = lazy(() => import('./screens/FullQuranScreen').then((m) => ({ default: m.FullQuranScreen })));
+const SurahScreen = lazy(() => import('./screens/SurahScreen').then((m) => ({ default: m.SurahScreen })));
+const PrayerTimesScreen = lazy(() => import('./screens/PrayerTimesScreen').then((m) => ({ default: m.PrayerTimesScreen })));
+const HadithLibraryScreen = lazy(() => import('./screens/HadithLibraryScreen').then((m) => ({ default: m.HadithLibraryScreen })));
+const IslamicStoriesScreen = lazy(() => import('./screens/IslamicStoriesScreen').then((m) => ({ default: m.IslamicStoriesScreen })));
+const MoreScreen = lazy(() => import('./screens/MoreScreen').then((m) => ({ default: m.MoreScreen })));
+const OnThisDayScreen = lazy(() => import('./screens/OnThisDayScreen').then((m) => ({ default: m.OnThisDayScreen })));
+const QiblaScreen = lazy(() => import('./screens/QiblaScreen').then((m) => ({ default: m.QiblaScreen })));
+const CalendarScreen = lazy(() => import('./screens/CalendarScreen').then((m) => ({ default: m.CalendarScreen })));
+const FlightPrayerScreen = lazy(() => import('./screens/FlightPrayerScreen').then((m) => ({ default: m.FlightPrayerScreen })));
+const KhatmahScreen = lazy(() => import('./screens/KhatmahScreen').then((m) => ({ default: m.KhatmahScreen })));
+const TadabburScreen = lazy(() => import('./screens/TadabburScreen').then((m) => ({ default: m.TadabburScreen })));
+const HappinessWheelScreen = lazy(() => import('./screens/HappinessWheelScreen').then((m) => ({ default: m.HappinessWheelScreen })));
+const MemorizationScreen = lazy(() => import('./screens/MemorizationScreen').then((m) => ({ default: m.MemorizationScreen })));
+const OnboardingScreen = lazy(() => import('./screens/OnboardingScreen').then((m) => ({ default: m.OnboardingScreen })));
+const SettingsDrawer = lazy(() => import('./components/SettingsDrawer').then((m) => ({ default: m.SettingsDrawer })));
 
 export default function App() {
   const currentScreen = useStore((s) => s.currentScreen);
@@ -148,13 +148,22 @@ export default function App() {
   const activeNav = isKidsMode ? kidsNav : standardNav;
 
   if (!userName) {
-    return <OnboardingScreen />;
+    return (
+      <Suspense fallback={<AppLoader />}>
+        <OnboardingScreen />
+      </Suspense>
+    );
   }
 
   return (
-    <div className="w-full max-w-md mx-auto bg-dark h-screen max-h-screen flex flex-col overflow-hidden text-sm relative">
-      
-      <div className="flex-1 overflow-hidden relative">
+    <div className="app-frame w-full max-w-md mx-auto bg-dark h-screen max-h-screen flex flex-col overflow-hidden text-sm relative">
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div className="absolute -top-24 -right-20 h-56 w-56 rounded-full bg-gold/15 blur-3xl" />
+        <div className="absolute top-1/3 -left-28 h-64 w-64 rounded-full bg-green/10 blur-3xl" />
+        <div className="absolute inset-0 opacity-[0.04] bg-[radial-gradient(circle_at_1px_1px,var(--th-text)_1px,transparent_0)] [background-size:22px_22px]" />
+      </div>
+
+      <div className="flex-1 overflow-hidden relative z-10">
         <AnimatePresence mode="popLayout" initial={false}>
           <motion.div
             key={currentScreen}
@@ -164,12 +173,14 @@ export default function App() {
             transition={{ duration: 0.3, ease: 'easeOut' }}
             className="absolute inset-0 flex flex-col"
           >
-            {getScreenContent()}
+            <Suspense fallback={<AppLoader compact />}>
+              {getScreenContent()}
+            </Suspense>
           </motion.div>
         </AnimatePresence>
       </div>
 
-      <nav className="flex justify-around items-center pt-3 pb-4 bg-mid border-t border-border z-20 shrink-0">
+      <nav className="relative z-20 mx-3 mb-3 flex shrink-0 items-center justify-around rounded-[1.75rem] border border-gold/15 bg-mid/90 px-1 pt-3 pb-[calc(0.85rem+env(safe-area-inset-bottom))] shadow-2xl shadow-black/25 backdrop-blur-xl">
         {activeNav.map((item) => {
           const Icon = item.icon;
           const isActive = currentScreen === item.id || 
@@ -183,8 +194,8 @@ export default function App() {
             <button
               key={item.id}
               onClick={() => navigate(item.id as Screen)}
-              className={`flex flex-col items-center gap-1.5 px-4 pb-2 transition-colors ${
-                isActive ? 'text-gold' : 'text-light hover:text-gold/80'
+              className={`relative flex min-w-14 flex-col items-center gap-1.5 rounded-2xl px-3 py-2 transition-all ${
+                isActive ? 'text-gold bg-gold/10 shadow-inner shadow-gold/10' : 'text-light hover:bg-dark/30 hover:text-gold/80'
               }`}
             >
               <motion.div
@@ -194,16 +205,30 @@ export default function App() {
                 <Icon size={22} strokeWidth={isActive ? 2.5 : 2} />
               </motion.div>
               <span className={`text-[10px] ${isActive ? 'font-bold' : ''}`}>{item.name}</span>
+              {isActive && <motion.span layoutId="nav-indicator" className="absolute -bottom-1 h-1 w-6 rounded-full bg-gold" />}
             </button>
           );
         })}
       </nav>
 
         {/* Settings Drawer Overlay */}
-      <SettingsDrawer />
+      <Suspense fallback={null}>
+        <SettingsDrawer />
+      </Suspense>
 
       {/* Custom Alert Overlay */}
       <AlertModal />
+    </div>
+  );
+}
+
+function AppLoader({ compact = false }: { compact?: boolean }) {
+  return (
+    <div className={`${compact ? 'h-full' : 'min-h-screen'} flex items-center justify-center bg-dark text-gold`}>
+      <div className="flex flex-col items-center gap-3">
+        <div className="h-10 w-10 rounded-full border-2 border-gold/20 border-t-gold animate-spin" />
+        <span className="text-xs font-bold">جارٍ التحميل...</span>
+      </div>
     </div>
   );
 }

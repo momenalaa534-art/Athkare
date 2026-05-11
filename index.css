@@ -34,16 +34,40 @@
   --th-red: #d32f2f;
 }
 
+html {
+  min-height: 100%;
+  background: var(--th-dark);
+  transition: font-size 0.3s ease;
+}
+
 body {
+  min-height: 100vh;
   font-family: 'Cairo', Arial, sans-serif;
-  background-color: var(--color-dark);
+  background:
+    radial-gradient(circle at top right, color-mix(in srgb, var(--th-gold) 18%, transparent), transparent 30rem),
+    linear-gradient(145deg, color-mix(in srgb, var(--th-mid) 70%, #000 30%), var(--th-dark) 55%);
   color: var(--color-text);
   margin: 0;
   padding: 0;
 }
 
-html {
-  transition: font-size 0.3s ease;
+#root {
+  min-height: 100vh;
+}
+
+.app-frame {
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.38);
+  isolation: isolate;
+}
+
+@media (min-width: 520px) {
+  .app-frame {
+    height: min(920px, calc(100vh - 32px));
+    max-height: calc(100vh - 32px);
+    margin-block: 16px;
+    border: 1px solid color-mix(in srgb, var(--th-gold) 22%, transparent);
+    border-radius: 2rem;
+  }
 }
 
 html.font-sm { font-size: 14px; }
